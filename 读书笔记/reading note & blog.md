@@ -3,3 +3,6 @@
   - TCP/IP网络编程
   - 后台开发核心技术与应用实践
   - Effective C++
+2. [Qt源码阅读](https://blog.csdn.net/dpsying/article/details/79253390) 
+3. [Qt中的信号与槽源码实现](https://blog.csdn.net/fanyun_01/article/details/78387091) 
+4. [Qt中信号与槽设计](https://blog.csdn.net/dpsying/article/details/78047305) 
