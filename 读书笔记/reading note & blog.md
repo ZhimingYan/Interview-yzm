@@ -8,3 +8,8 @@
 4. [Qt中信号与槽设计](https://blog.csdn.net/dpsying/article/details/78047305) 
 5. [Unix网络编程笔记与习题答案](https://blog.csdn.net/ethan95/article/category/8506853)
 6. [Unix网络编程读书笔记](http://blog.csdn.net/column/details/17416.html)
+7. [网络通信](https://www.cnblogs.com/jeakeven/category/729542.html)
+ - Linux五种IO模型
+ - 同步、异步、阻塞、与非阻塞
+ - Socket、TCP/Ip
+ - IO多路复用select、poll、epoll详解
