@@ -4,11 +4,25 @@
 
 1. 二叉树的最长路径的长度(o（nlogn))如何优化到On
 
+   左边最长加右边最长
+
 2. 给一个字符串，包含中大小括号，判断字符串是否匹配
+
+   使用栈来
 
 3. TCP/UDP的区别
 
+   - Tcp是面向连接的可靠传输，UDP是不连接的不可靠传输
+   - TCP是字节流，UDP是数据报
+   - TCP保证报文准确达到，而UDP是尽自己最大的可能
+
 4. TCP是如何实现可靠传输
+
+   1. 字节流
+   2. 确认应答机制
+   3. 超时重传
+   4. 流量控制
+   5. 拥塞控制
 
 5. TCP的四次挥手
 
@@ -20,34 +34,160 @@
 
 8. 进程线程的区别
 
+   进程是资源分配的基本单位，线程是资源调度的基本单位
+
+   一个进程可包含多个线程，一个线程崩溃，该线程所在的进程崩溃
+
+   通信机制不一样
+
+   进程：管道，消息队列，信号量，信号，共享内存，套接字
+
+   线程之间的通信方式有：临界区，互斥量，信号量，事件
+
+   进程调试简单但是开销大
+
+   进程适合多核，多机分布；线程适用于多核
+
 9. 如何创建子进程
+   fork
 
 10. fork 和exec有深入的了解么
 
+    父进程产生子进程使用 fork 拷贝出来一个父进程的副本，此时只拷贝了父进程的页表，两个进
+    程都读同一块内存，当有进程写的时候使用写实拷贝机制分配内存，exec 函数可以加载一个 elf
+    文件去替换父进程，从此父进程和子进程就可以运行不同的程序了。fork 从父进程返回子进程
+    的 pid，从子进程返回 0.调用了 wait 的父进程将会发生阻塞，直到有子进程状态改变,执行成功
+    返回 0，错误返回-1。exec 执行成功则子进程从新的程序开始运行，无返回值，执行失败返回-1
+
 11. 常用的页面置换算法
+
+    先进先出(FIFO)算法：置换最先调入内存的页面，即置换在内存中驻留时间最久的页面。按
+    照进入内存的先后次序排列成队列，从队尾进入，从队首删除。
+    最近最少使用（LRU）算法: 置换最近一段时间以来最长时间未访问过的页面。根据程序局
+    部性原理，刚被访问的页面，可能马上又要被访问；而较长时间内没有被访问的页面，可能最近
+    不会被访问。
+
+    还有OPT与时钟
 
 12. 自己实现LRU算法
 
+    ~~~cpp
+    class LRUCache{
+    public:
+        LRUCache(size_t capacity)
+            :capacity_(capacity)
+        {}
+    
+        int get(int key){
+            auto found_iter = map_.find(key);
+            if(found_iter == map_.end()){   //key doesn't exist
+                return -1;
+            }
+            list_.splice(list_.begin(),list_,found_iter->second);   //将最近一次使用的，放置list的头部位置
+            return found_iter->second->second;
+        }
+    
+        void set(int key,int value){
+            auto found_iter = map_.find(key);
+            if(found_iter != map_.end()){
+                list_.splice(list_.begin(),list_,found_iter->second);
+                found_iter->second->second = value;
+                return;
+            }
+            if(map_.size() == capacity_){
+                int key_to_del = list_.back().first;    //最近最久未使用
+                list_.pop_back();
+                map_.erase(key_to_del);
+            }
+            list_.emplace_front(key,value);
+            map_[key] = list_.begin();
+        }
+    private:
+        size_t capacity_;   //保存大小
+        unordered_map<int,list<pair<int,int>>::iterator> map_;  //first is key,second is list iterator
+        list<pair<int,int>> list_;  //first is key,second is value
+    };
+    
+    ~~~
+
 13. http相关
+
+    http是一个文本传输协议
 
 14. http里面的方法
 
+    get：请求指定的页面信息，并返回实体主体
+
+    head:类似于get，只不过返回的响应没有具体的内容，用于获取报文头部
+
+    post向指定资源提交数据进行处理请求，数据包含在请求体中，post请求可能会导致新的资源的建立和已有资源的修改http报文
+
 15. http里面的返回码
 
+    1xx：指示信息     表示请求以及接收，继续处理
+
+    2xx:成功       表示请求已经成功的被接受理解
+
+    3xx: 重定向          要完成请求必须进行更进一步的操作
+
+    4xx: 客户端错误           请求语法错误或请求无法实现
+
+    5xx:服务端错误      服务器未能实现合法的请求
+
+    ```
+    200 OK                        //客户端请求成功
+    400 Bad Request               //客户端请求有语法错误，不能被服务器所理解
+    401 Unauthorized              //请求未经授权，这个状态代码必须和WWW-Authenticate报头域一起使用 
+    403 Forbidden                 //服务器收到请求，但是拒绝提供服务
+    404 Not Found                 //请求资源不存在，eg：输入了错误的URL
+    500 Internal Server Error     //服务器发生不可预期的错误
+    503 Server Unavailable        //服务器当前不能处理客户端的请求，一段时
+    ```
+
 16. 指针引用的区别
+
+    指针是的是内存的地址，而引用只是变量的别名
+
+    引用必须初始化，且后续不能被改变，指针可以被初始化
+
+    sizeof不一样
+
+    可以const指针，不能const引用
 
 17. 五个海盗分金币
 
 #### 二面
 
 1. 算法：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。
+
 2. 如何查看Linux系统运行状态
+
+   https://blog.csdn.net/u012036736/article/details/78249370
+
+   用 'top -i' 看看有多少进程处于 Running 状态，可能系统存在内存或 I/O 瓶颈，用 free 看看系统内存使用情况，swap 是否被占用很多，用 iostat 看看 I/O 负载情况...
+
 3. Linux软连接和硬链接的区别
+
+   为了解决文件共享问题，Linux 引入了软链接和硬链接。除了为 Linux 解决文件共享使用，
+   还带来了隐藏文件路径、增加权限安全及节省存储等好处。若 1 个 inode 号对应多个文件名，则
+   为硬链接，即硬链接就是同一个文件使用了不同的别名,使用 ln 创建。若文件用户数据块中存放
+   的内容是另一个文件的路径名指向，则该文件是软连接。软连接是一个普通文件，有自己独立的
+   inode,但是其数据块内容比较特殊。
+
 4. Linux进程通信的方式
+
+   管道、信号量、信号、消息队列、共享内存
+
 5. 有名管道和匿名管道的区别
+
 6. epoll，poll,select的区别
+
 7. 父进程有多个线程在运行，调用fork后，产生的子进程中有多少个线程？
+
+   一个
+
 8. 为什会只fork一个线程？会带来什么问题？
+
 9. dns原理
 
 #### 三面
